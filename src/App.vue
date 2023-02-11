@@ -51,7 +51,7 @@ export default {
       //specieData: {},
       pokemonName: '',
       //specieID: '',
-      ShowAndHide: false,
+      ShowAndHide: true,
 
     }
   },
