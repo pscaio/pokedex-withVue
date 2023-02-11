@@ -1,26 +1,69 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <header>
+    <h1>Pokedex</h1>
+  </header>
+
+  <label class="searchBar-label">
+    <input 
+    type="text" 
+    v-model="pokemonName" 
+    placeholder="Digite aqui o nome do Pokemon"
+    >
+    <button @click="searchPokemon">Procurar</button>
+  </label>
+
+  <div 
+  class="main"
+  v-if="Object.entries(pokemonData).length > 0">
+    <section class="pokemonCard-container">
+      <div class="pokemonCard-nameImg">
+        <h1 class="pokemonCard-name">{{ pokemonData.name }}</h1>
+        <img 
+        :src="pokemonData.sprites.front_default" 
+        alt="pokemonData.name"
+        >
+      </div>
+    </section>
+  </div>
+
+
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import { pokeApi } from "./api/PokeApi.js"
 
 export default {
   name: 'App',
-  components: {
-    HelloWorld
-  }
+
+  data() {
+    return {
+      pokemonData: {},
+      pokemonName: '',
+
+    }
+  },
+
+  methods: {
+    async searchPokemon() {
+      try {
+        const pokemonToFind = await fetch(`${pokeApi}/${this.pokemonName.toLowerCase()}`)
+        const pokemon = await pokemonToFind.json()
+        this.pokemonData = pokemon
+        console.log(pokemon);
+        return pokemon
+
+      } catch (error) {
+        alert("Pokemon não encontrado")
+      }
+    }
+  },
+  
 }
 </script>
-
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: Tahoma;
   text-align: center;
-  color: #2c3e50;
   margin-top: 60px;
 }
 </style>
