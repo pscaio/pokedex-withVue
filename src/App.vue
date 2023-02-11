@@ -9,7 +9,7 @@
     v-model="pokemonName" 
     placeholder="Digite aqui o nome do Pokemon"
     >
-    <button @click="searchPokemon">Procurar</button>
+    <button @click="searchPokemon()">Procurar</button>
   </label>
 
   <div 
@@ -17,11 +17,33 @@
   v-if="Object.entries(pokemonData).length > 0">
     <section class="pokemonCard-container">
       <div class="pokemonCard-nameImg">
-        <h1 class="pokemonCard-name">{{ pokemonData.name }}</h1>
+        <h1 class="pokemonCard-name">{{ pokemonData.name }}</h1>    
         <img 
         :src="pokemonData.sprites.front_default" 
-        alt="pokemonData.name"
+        :alt="pokemonData.name"
         >
+      </div>
+
+      <div class="pokemonCard-info">
+        <ul class="pokemonCard-info_type">
+          <h2>Type:</h2>
+          <li
+          v-for="(type, index) in pokemonData.types"
+          :key="index"
+          :class="type.type.name"
+          >
+            <span>{{ type.type.name }}</span>
+          </li>
+        </ul>
+        <ul class="pokemonCard-info_stats">
+          <h2>Stats:</h2>
+            <li
+            v-for="(stats, index) in pokemonData.stats"
+            :key="index"
+            >
+              <span>{{stats.stat.name}} ➞ {{ stats.base_stat }} </span>
+            </li>
+        </ul>
       </div>
     </section>
   </div>
@@ -30,7 +52,8 @@
 </template>
 
 <script>
-import { pokeApi } from "./api/PokeApi.js"
+import { pokeApi, /* pokeApiSpecies */} from "./api/PokeApi.js"
+
 
 export default {
   name: 'App',
@@ -38,10 +61,13 @@ export default {
   data() {
     return {
       pokemonData: {},
+      //specieData: {},
       pokemonName: '',
-
+      //specieID: '',
     }
   },
+
+ 
 
   methods: {
     async searchPokemon() {
@@ -49,15 +75,33 @@ export default {
         const pokemonToFind = await fetch(`${pokeApi}/${this.pokemonName.toLowerCase()}`)
         const pokemon = await pokemonToFind.json()
         this.pokemonData = pokemon
-        console.log(pokemon);
-        return pokemon
-
       } catch (error) {
-        alert("Pokemon não encontrado")
+        alert(error)
       }
-    }
-  },
-  
+    },
+    
+    //tentativa falha de pegar o ID atravez da url base 'pokeApi' para atribuir em uma nova onde existe as especies para apos isso atribuir as evoluções e mostrar na tela
+   /* async speciesUrl() {
+      try {
+        const specieToFind = await fetch(`${pokeApiSpecies}/${this.specieID}`)
+        
+        const specie = await specieToFind.json()
+        this.specieData = specie
+        this.getSpeciesID()
+        return specie
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+     getSpeciesID() {
+      const pokemonSpeciesUrl = this.pokemonData.species.url
+      this.specieID = pokemonSpeciesUrl.split('/')[6],
+      
+      console.log("getSpeciesID", this.specieID);
+      return this.specieID
+    }, */
+  }, 
 }
 </script>
 <style>
